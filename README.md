@@ -59,37 +59,45 @@ predictions = nb.predict(X_test)
 Here is an example of how to use the Naive Bayes classifier with sample data:
 
 ```python
-# Import the required modules
-from bayes import NaiveBayes621
-from sklearn.feature_extraction.text import CountVectorizer
+from bayes import *
 
 # Create an instance of the NaiveBayes621 class
 nb = NaiveBayes621()
 
-# Generate sample data
-documents = [
-    "This is a positive document",
-    "This is a negative document",
-    "Another positive document",
-    "Another negative document"
-]
-labels = [1, 0, 1, 0]
+# Directory for negative and positive review files
+neg_dir = 'review_polarity/txt_sentoken/neg/'
+pos_dir = 'review_polarity/txt_sentoken/pos/'
 
-# Create a vectorizer to convert text to word vectors
-vectorizer = CountVectorizer()
-X = vectorizer.fit_transform(documents).toarray()
+# Load negative and positive review documents
+neg = load_docs(neg_dir)
+pos = load_docs(pos_dir)
 
-# Fit the classifier to the data
-nb.fit(X, labels)
+# Create a vocabulary from the negative and positive review documents
+V = vocab(neg, pos)
 
-# Predict the class of a new document
-new_document = ["This is a test document"]
-X_new = vectorizer.transform(new_document).toarray()
-prediction = nb.predict(X_new)
-print(prediction)  # Output: [1]
+# Vectorize the negative and positive review documents using the vocabulary
+vneg = vectorize_docs(neg, V)
+vpos = vectorize_docs(pos, V)
+
+# Create the feature matrix by stacking the negative and positive vectors
+X = np.vstack([vneg, vpos])
+# Create the target labels (0 for negative, 1 for positive)
+y = np.vstack([np.zeros(shape=(len(vneg), 1)),
+               np.ones(shape=(len(vpos), 1))]).reshape(-1)
+
+# Train the Naive Bayes model with the feature matrix and target labels
+nb.fit(X, y)
+
+# Convert test instances into a numerical feature vector
+test1 = np.expand_dims(vectorize(V, words("mostly very funny , the story is quite appealing.")), axis=0)
+test2 = np.expand_dims(vectorize(V, words("there is already a candidate for the worst of 1997.")), axis=0)
+
+# Make a prediction for test instances
+prediction1 = nb.predict(test1)    # Output: array([1.])
+prediction2 = nb.predict(test2)    # Output: array([0.])
 ```
 
-In this example, we create a `NaiveBayes621` instance, generate sample data consisting of four documents with their corresponding labels, and convert the documents into word vectors using a `CountVectorizer`. We then fit the classifier to the data and predict the class of a new test document.
+The example performs sentiment analysis using the Naive Bayes algorithm. It starts by loading negative and positive review documents and creating a vocabulary based on them. The documents are then vectorized using the vocabulary, and a feature matrix and corresponding target labels are created. The Naive Bayes model is trained on this data. Finally, two test instances are converted into feature vectors and used to make predictions on their sentiment using the trained model.
 
 ## Contributing
 
