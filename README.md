@@ -99,10 +99,6 @@ prediction2 = nb.predict(test2)    # Output: array([0.])
 
 The example performs sentiment analysis using the Naive Bayes algorithm. It starts by loading negative and positive review documents and creating a vocabulary based on them. The documents are then vectorized using the vocabulary, and a feature matrix and corresponding target labels are created. The Naive Bayes model is trained on this data. Finally, two test instances are converted into feature vectors and used to make predictions on their sentiment using the trained model.
 
-## Contributing
-
-Contributions to this repository are welcome. If you find any issues or have suggestions for improvements, please open an issue or submit a pull request.
-
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
